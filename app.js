@@ -14,16 +14,18 @@
     set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
   };
 
-  // Calls fn on three taps/clicks in quick succession. Uses `click` so the
+  const SECRET_TAPS = 5;
+
+  // Calls fn after SECRET_TAPS taps/clicks in quick succession. Uses `click` so the
   // handler runs inside a user gesture (needed to open the file picker).
-  function onTripleTap(el, fn) {
+  function onMultiTap(el, fn) {
     let count = 0;
     let last = 0;
     el.addEventListener("click", (e) => {
       const now = Date.now();
       count = now - last < 450 ? count + 1 : 1;
       last = now;
-      if (count === 3) {
+      if (count === SECRET_TAPS) {
         count = 0;
         e.preventDefault();
         fn();
@@ -38,7 +40,7 @@
     if (v && $(id)) $(id).textContent = v;
   });
 
-  // ---------- Name: triple tap on top tab to edit ----------
+  // ---------- Name: multi-tap on top tab to edit ----------
   const nameModal = $("nameModal");
   const nameInput = $("nameInput");
 
@@ -55,7 +57,7 @@
     nameInput.blur();
   }
 
-  onTripleTap($("tabName"), () => {
+  onMultiTap($("tabName"), () => {
     nameInput.value = $("tabName").textContent;
     nameModal.hidden = false;
     nameInput.focus();
@@ -75,7 +77,7 @@
     if (e.target === nameModal) closeNameModal();
   });
 
-  // ---------- Photo: triple tap to upload ----------
+  // ---------- Photo: multi-tap to upload ----------
   const photoWrap = $("photoWrap");
   const photoImg = $("userPhoto");
   const photoInput = $("photoInput");
@@ -96,7 +98,7 @@
     input.click();
   }
 
-  onTripleTap(photoWrap, () => { photoSheet.hidden = false; });
+  onMultiTap(photoWrap, () => { photoSheet.hidden = false; });
   $("photoUploadBtn").addEventListener("click", () => pickFrom(photoInput));
   $("photoCaptureBtn").addEventListener("click", () => pickFrom(photoCapture));
   $("photoSheetCancel").addEventListener("click", closePhotoSheet);

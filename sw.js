@@ -1,4 +1,4 @@
-const CACHE = "abhivyakti-v16";
+const CACHE = "abhivyakti-v17";
 const ASSETS = [
   "./",
   "./index.html",
