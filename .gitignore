@@ -1,0 +1,9 @@
+# Local Wi-Fi server: contains the private certificate key. Never commit.
+local-server/
+
+# Source images not used by the app
+sample.jpg
+icon_image.jpg
+
+# Test leftovers
+_*.html

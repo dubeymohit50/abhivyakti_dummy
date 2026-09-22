@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#f5ebcf" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Abhivyakti Workshop" />
+  <title>Abhivyakti Workshop</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div>
+          <h1 class="title">Abhivyakti Workshop</h1>
+          <div class="version">Version - <span>2.0</span></div>
+        </div>
+        <button class="logout-btn" id="logoutBtn" aria-label="Logout / Scan QR">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+      </div>
+      <nav class="tabs">
+        <div class="tab active" id="tabName">Shubham Tare</div>
+      </nav>
+    </header>
+
+    <!-- Details -->
+    <main class="content">
+      <section class="details">
+        <div class="info">
+          <div class="label">Name</div>
+          <div class="value" id="fName">Shubham Tare</div>
+          <div class="sub" id="fMeta">Male | 28 yrs</div>
+
+          <div class="label">Batch Time</div>
+          <div class="value" id="fBatch">08:15 - 09:15 PM</div>
+
+          <div class="label">Venue</div>
+          <div class="value" id="fVenue">Lower Hall - Punjab Arod Vanshiya (Nath Mandir)</div>
+          <div class="sub" id="fAddress">17,M.G.Road Nath Mandir Road, Indore</div>
+        </div>
+
+        <div class="photo-wrap" id="photoWrap">
+          <img id="userPhoto" src="assets/default-photo.svg" alt="User photo" draggable="false" />
+        </div>
+        <input type="file" id="photoInput" accept="image/*" hidden />
+        <input type="file" id="photoCapture" accept="image/*" capture="user" hidden />
+      </section>
+
+      <!-- Action buttons (visual only) -->
+      <section class="actions">
+        <button class="action-btn" type="button">Photo ID</button>
+        <button class="action-btn" type="button">Receipt</button>
+        <button class="action-btn" type="button">ID Card</button>
+        <button class="action-btn" type="button">Invoice</button>
+      </section>
+
+      <!-- QR -->
+      <section class="qr-section">
+        <div class="qr-card blurred" id="qrCard">
+          <div class="qr-code" id="qrCode"></div>
+          <button class="refresh-pill" id="refreshBtn" type="button">
+            <svg class="refresh-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.5 12a8.5 8.5 0 1 1-2.49-6.01" />
+              <polyline points="20.5 3.5 20.5 8.5 15.5 8.5" />
+            </svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Photo options sheet -->
+  <div class="sheet" id="photoSheet" hidden>
+    <div class="sheet-card">
+      <button type="button" class="sheet-btn" id="photoUploadBtn">Upload Photo</button>
+      <button type="button" class="sheet-btn" id="photoCaptureBtn">Capture Photo</button>
+      <button type="button" class="sheet-btn cancel" id="photoSheetCancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Edit name dialog -->
+  <div class="modal" id="nameModal" hidden>
+    <form class="modal-card" id="nameForm" autocomplete="off">
+      <label class="modal-title" for="nameInput">Name</label>
+      <input class="modal-input" id="nameInput" type="text" maxlength="40" />
+      <div class="modal-actions">
+        <button type="button" class="modal-btn ghost" id="nameCancel">Cancel</button>
+        <button type="submit" class="modal-btn">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Scanner overlay -->
+  <div class="scanner" id="scanner" hidden>
+    <div class="scanner-head">
+      <span>Scan QR</span>
+      <button class="scanner-close" id="scannerClose" aria-label="Close scanner">&times;</button>
+    </div>
+    <div class="scanner-body">
+      <div class="reader">
+        <video id="scanVideo" playsinline muted autoplay></video>
+        <div class="reader-frame"></div>
+      </div>
+      <p class="scanner-hint" id="scannerMsg">Point the camera at a QR code</p>
+    </div>
+  </div>
+
+  <script>
+    // Participant details (edit here)
+    window.PASS_CONFIG = {
+      name: "Shubham Tare",
+      meta: "Male | 28 yrs",
+      batch: "08:15 - 09:15 PM",
+      venue: "Lower Hall - Punjab Arod Vanshiya (Nath Mandir)",
+      address: "17,M.G.Road Nath Mandir Road, Indore",
+      placeholderQr: "ABHIVYAKTI"
+    };
+  </script>
+  <script src="vendor/qrcode.min.js"></script>
+  <script src="vendor/barcode-detector.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
