@@ -1,4 +1,4 @@
-const CACHE = "abhivyakti-v14";
+const CACHE = "abhivyakti-v15";
 const ASSETS = [
   "./",
   "./index.html",
@@ -37,11 +37,15 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        if (res.ok && cacheable) {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
+        if (res.ok) {
+          if (cacheable) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, copy));
+          }
+          return res;
         }
-        return res;
+        // Server error or site taken down (e.g. 404): keep using the saved copy
+        return caches.match(e.request).then((hit) => hit || res);
       })
       .catch(() => caches.match(e.request).then((hit) => hit || caches.match("./index.html")))
   );
